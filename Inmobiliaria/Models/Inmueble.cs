@@ -17,4 +17,5 @@ namespace Inmobiliaria.Models
         public string Estado { get; set; }
         public Propietario IdPropietario { get; set; }
     }
+    //prueba
 }
