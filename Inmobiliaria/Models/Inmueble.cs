@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,12 +11,14 @@ namespace Inmobiliaria.Models
         [Key]
         public int IdInmueble { get; set; }
         public string Direccion { get; set; }
-        public string TipoImnueble { get; set; }
-        public string Precio { get; set; }
-        public string CantHambientes { get; set; }
-        public string Uso { get; set; }
         public string Estado { get; set; }
-        public Propietario IdPropietario { get; set; }
+        public string TipoInmueble { get; set; }
+        public string Uso { get; set; }
+        public int CantHambientes { get; set; }
+        public decimal Precio { get; set; }
+        public int IdPropietario { get; set; }
+        public Propietario Propietario { get; set; }
+
+        
     }
-    //prueba
 }
