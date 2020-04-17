@@ -2,8 +2,11 @@
   "ExpandedNodes": [
     "",
     "\\Inmobiliaria",
-    "\\Inmobiliaria\\Models"
+    "\\Inmobiliaria\\Controllers",
+    "\\Inmobiliaria\\Models",
+    "\\Inmobiliaria\\Views",
+    "\\Inmobiliaria\\Views\\Inmuebles"
   ],
-  "SelectedNode": "\\Inmobiliaria\\Models",
+  "SelectedNode": "\\Inmobiliaria\\Views\\Inmuebles\\Edit.cshtml",
   "PreviewInSolutionExplorer": false
 }
