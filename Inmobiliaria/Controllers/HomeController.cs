@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Inmobiliaria.Models;
 using Microsoft.Extensions.Configuration;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inmobiliaria.Controllers
 {
@@ -27,6 +29,31 @@ namespace Inmobiliaria.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public ActionResult Seguro()
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            return View(claims);
+        }
+
+        [Authorize(Policy = "Administrador")]
+        public ActionResult Admin()
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            return View(claims);
+        }
+
+        public ActionResult Restringido()
+        {
+            return View();
+        }
+        [Authorize]
+        public ActionResult Autenticado()
         {
             return View();
         }

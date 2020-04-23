@@ -27,8 +27,12 @@ namespace Inmobiliaria.Controllers
         public ActionResult Index()
         {
             
-            var lista = repositorioPropietario.ObtenerTodos();
-            return View(lista);
+
+                var lista = repositorioPropietario.ObtenerTodos();
+                return View(lista);
+
+           
+            
         }
 
         // GET: Propietarios/Details/5
@@ -97,7 +101,7 @@ namespace Inmobiliaria.Controllers
                 return View(p);
             }
         }
-
+        [Authorize(Policy = "Administrador")]
         // GET: Propietarios/Delete/5
         public ActionResult Delete(int id)
         {

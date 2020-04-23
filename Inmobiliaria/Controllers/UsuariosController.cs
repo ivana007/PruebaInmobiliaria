@@ -30,7 +30,7 @@ namespace Inmobiliaria.Controllers
 
 
 
-
+        [Authorize(Policy = "Administrador")]
         // GET: Usuarios
         public ActionResult Index()
         {
@@ -116,20 +116,22 @@ namespace Inmobiliaria.Controllers
 
         // POST: Usuarios/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         
         public ActionResult Delete(int id, Usuario usuario)
         {
+            Usuario u = null;
             try
             {
                 // TODO: Add delete logic here
-                usuario = repositorioUsuario.ObtenerPorId(id);
-                usuario.Estado = "0";
-                int res = repositorioUsuario.BajaLogica(usuario);
+                u = repositorioUsuario.ObtenerPorId(id); 
+                u.Estado = "0";
+                int res = repositorioUsuario.BajaLogica(u);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
                 return View();
             }
         }
@@ -146,7 +148,7 @@ namespace Inmobiliaria.Controllers
         // POST: Home/Login
         [AllowAnonymous]
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<ActionResult> Login(LoginView login)
         {
             try
@@ -202,7 +204,7 @@ namespace Inmobiliaria.Controllers
         {
             await HttpContext.SignOutAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index","Home");
         }
     }
 }
