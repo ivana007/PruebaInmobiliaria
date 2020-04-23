@@ -1,0 +1,56 @@
+﻿@model Inmobiliaria.Models.Garante
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>BORRAR</h1>
+
+<h3>Esta seguro que desea Eliminar este Registro?</h3>
+<div>
+    <h4>Garante</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IdGarante)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IdGarante)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Nombre)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Nombre)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Apellido)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Apellido)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Dni)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Dni)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Mail)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Mail)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Telefono)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Telefono)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="submit" value="Elimiar" class="btn btn-danger" /> |
+        <a asp-action="Index">Volver a la Lista</a>
+    </form>
+</div>

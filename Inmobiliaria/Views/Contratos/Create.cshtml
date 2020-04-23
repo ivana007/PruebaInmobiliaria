@@ -1,0 +1,81 @@
+﻿@model Inmobiliaria.Models.Contrato
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Crear</h1>
+
+<h4>Contrato</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="FechaAlta" class="control-label"></label>
+                <input asp-for="FechaAlta" class="form-control" />
+                <span asp-validation-for="FechaAlta" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaBaja" class="control-label"></label>
+                <input asp-for="FechaBaja" class="form-control" />
+                <span asp-validation-for="FechaBaja" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label class="control-label">Garante</label>
+                <select class="form-control" name="IdGarante">
+                    @foreach (var item in (IList<Garante>)ViewBag.Garantes)
+                    {
+                        <option value="@item.IdGarante">@(item.Nombre + " " + item.Apellido)</option>
+                    }
+                </select>
+                <span asp-validation-for="IdGarante" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Pago</label>
+                <select class="form-control" name="IdPago">
+                    @foreach (var item in (IList<Pago>)ViewBag.Pagos)
+                    {
+                        <option value="@item.IdPago">@(item.FechaPago + " " + item.Importe)</option>
+                    }
+                </select>
+                <span asp-validation-for="IdPago" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Inquilino</label>
+                <select class="form-control" name="IdInquilino">
+                    @foreach (var item in (IList<Inquilino>)ViewBag.Inquilinos)
+                    {
+                        <option value="@item.IdInquilino">@(item.Nombre + " " + item.Apellido)</option>
+                    }
+                </select>
+                <span asp-validation-for="IdInquilino" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Inmueble</label>
+                <select class="form-control" name="IdInmueble">
+                    @foreach (var item in (IList<Inmueble>)ViewBag.Inmuebles)
+                    {
+                        <option value="@item.IdInmueble">@(item.Direccion + " " + item.Uso)</option>
+                    }
+                </select>
+                <span asp-validation-for="IdInmueble" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Crear" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Volver a la Lista</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

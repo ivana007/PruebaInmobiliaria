@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Inmobiliaria.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace Inmobiliaria.Controllers
 {
+    [Authorize]
     public class InmueblesController : Controller
     {
         private readonly IConfiguration configuration;
@@ -54,7 +56,9 @@ namespace Inmobiliaria.Controllers
         {
             try
             {
+               
                 ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
+           
                 return View();
             }
             catch (Exception ex)
@@ -92,6 +96,7 @@ namespace Inmobiliaria.Controllers
         public ActionResult Edit(int id)
         {
             ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
+           //var inmueble = repositorioInmueble.ObtenerPorId(id);
             var i = repositorioInmueble.ObtenerPorId(id);
             return View(i);
         }
@@ -121,32 +126,40 @@ namespace Inmobiliaria.Controllers
                 int res = repositorioInmueble.Modificacion(inmueble);
                 return RedirectToAction(nameof(Index));
             }
-            catch(Exception e)
+            catch(Exception )
             {
 
                 return View();
             }
         }
-
+        [Authorize(Policy = "Administrador")]
         // GET: Inmuebles/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var i = repositorioInmueble.ObtenerPorId(id);
+            return View(i);
         }
 
         // POST: Inmuebles/Delete/5
+        [Authorize(Policy = "Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
+            Inmueble i = null;
             try
             {
                 // TODO: Add delete logic here
-
+                i = repositorioInmueble.ObtenerPorId(id);
+                i.Estado = "No Disponible";
+               int res =repositorioInmueble.BajaLogica(i);
+                
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
+                ViewBag.StackTrate = ex.StackTrace;
                 return View();
             }
         }

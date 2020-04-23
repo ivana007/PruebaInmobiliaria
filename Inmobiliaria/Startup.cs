@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,9 +16,10 @@ namespace Inmobiliaria
 {
     public class Startup
     {
+        private readonly IConfiguration configuration;
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -23,7 +27,29 @@ namespace Inmobiliaria
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>//el sitio web valida con cookie
+                {
+                    options.LoginPath = "/Usuarios/Login";//Usuarios/Login   asi esta en diapo con Usuarios
+                    options.LogoutPath = "/Usuarios/Logout";//Usuarios/Logout
+                    options.AccessDeniedPath = "/Home/Restringido";
+                });
+            // services.AddControllersWithViews();
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
+
+            services.AddAuthorization(options =>
+                {
+                    options.AddPolicy("Administrador", policy => policy.RequireClaim(ClaimTypes.Role, "Administrador")
+                  );
+                } 
+            );
+            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,10 +67,16 @@ namespace Inmobiliaria
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseCookiePolicy();
             app.UseRouting();
 
             app.UseAuthorization();
+
+           /* app.UseMvc(routes => {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+        }); */
 
             app.UseEndpoints(endpoints =>
             {

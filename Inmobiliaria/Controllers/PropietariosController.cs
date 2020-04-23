@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Inmobiliaria.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace Inmobiliaria.Controllers
 {
+   [Authorize]
     public class PropietariosController : Controller
     {
         private readonly IConfiguration configuration;
@@ -20,9 +22,11 @@ namespace Inmobiliaria.Controllers
             this.configuration = configuration;
             repositorioPropietario = new RepositorioPropietario(configuration);
         }
+        
         // GET: Propietarios
         public ActionResult Index()
         {
+            
             var lista = repositorioPropietario.ObtenerTodos();
             return View(lista);
         }
@@ -104,6 +108,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // POST: Propietarios/Delete/5
+        [Authorize(Policy = "Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)//(int id, IFormCollection collection)

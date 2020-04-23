@@ -63,6 +63,38 @@ namespace Inmobiliaria.Models
 			}
 			return res;
 		}
+		public int BajaLogica(Inmueble entidad)
+		{
+			int res = -1;
+			using (SqlConnection connection = new SqlConnection(connectionString))
+			{
+				string sql = "UPDATE Inmuebles SET " +
+					"Direccion=@direccion, TipoInmueble=@tipoInmueble, Precio=@precio, CantHambientes=@cantHambientes, Uso=@uso, Estado=@estado ,IdPropietario=@idPropietario " +
+					"WHERE IdInmueble = @IdInmueble";
+				using (SqlCommand command = new SqlCommand(sql, connection))
+				{
+					command.Parameters.AddWithValue("@direccion", entidad.Direccion);
+					command.Parameters.AddWithValue("@tipoInmueble", entidad.TipoInmueble);
+					command.Parameters.AddWithValue("@precio", entidad.Precio);
+					command.Parameters.AddWithValue("@cantHambientes", entidad.CantHambientes);
+					command.Parameters.AddWithValue("@uso", entidad.Uso);
+					command.Parameters.AddWithValue("@estado", entidad.Estado);
+					command.Parameters.AddWithValue("@IdPropietario", entidad.IdPropietario);
+					command.Parameters.AddWithValue("@IdInmueble", entidad.IdInmueble);
+					command.CommandType = CommandType.Text;
+					connection.Open();
+					res = command.ExecuteNonQuery();
+					connection.Close();
+				}
+			}
+			return res;
+		}
+
+
+
+
+
+
 		public int Modificacion(Inmueble entidad)
 		{
 			int res = -1;
@@ -97,7 +129,8 @@ namespace Inmobiliaria.Models
 			{
 				string sql = "SELECT  IdInmueble, Direccion, TipoInmueble, Precio, CantHambientes, Uso, Estado, i.IdPropietario," +
 					" p.Nombre, p.Apellido" +
-					" FROM Inmuebles i INNER JOIN Propietarios p ON i.IdPropietario = p.IdPropietario" ;
+					" FROM Inmuebles i INNER JOIN Propietarios p ON i.IdPropietario = p.IdPropietario"+
+					$" WHERE i.Estado LIKE 'Disponible'";
 				using (SqlCommand command = new SqlCommand(sql, connection))
 				{
 					command.CommandType = CommandType.Text;
