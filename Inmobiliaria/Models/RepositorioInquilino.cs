@@ -252,5 +252,37 @@ namespace Inmobiliaria.Models
 			}
 			return res;
 		}
+		public Inquilino BuscarPorDni(string dni)
+		{
+			Inquilino i = null;
+			using (SqlConnection connection = new SqlConnection(connectionString))
+			{
+				string sql = $"SELECT IdInquilino, Nombre, Apellido, Dni, Telefono, Mail, LugarTrabajo, Condicion FROM Inquilinos" +
+					$" WHERE Dni=@dni";
+				using (SqlCommand command = new SqlCommand(sql, connection))
+				{
+					command.CommandType = CommandType.Text;
+					command.Parameters.Add("@mail", SqlDbType.VarChar).Value = dni;
+					connection.Open();
+					var reader = command.ExecuteReader();
+					if (reader.Read())
+					{
+						i = new Inquilino
+						{
+							IdInquilino = reader.GetInt32(0),
+							Nombre = reader.GetString(1),
+							Apellido = reader.GetString(2),
+							Dni = reader.GetString(3),
+							Telefono = reader.GetString(4),
+							Mail = reader.GetString(5),
+							LugarTrabajo = reader.GetString(6),
+							Condicion = reader.GetString(7),
+						};
+					}
+					connection.Close();
+				}
+			}
+			return i;
+		}
 	}
 }

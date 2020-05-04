@@ -1,0 +1,81 @@
+﻿@model IEnumerable<Inmobiliaria.Models.Contrato>
+
+@{
+    ViewData["Title"] = "BuscarContrato";
+}
+
+<h1>BuscarContrato</h1>
+
+@*<p>
+        <a asp-action="Create">Create New</a>
+    </p>*@
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="BuscarContrato">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label class="control-label">Dni Inquilino</label>
+                <input type="text" name="dni" class="form-control" />
+
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="buscar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IdContrato)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaAlta)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaBaja)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdGarante)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdInquilino)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdInmueble)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IdContrato)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaAlta)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaBaja)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IdGarante)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IdInquilino)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IdInmueble)
+                </td>
+                <td>
+                    @Html.ActionLink("Generar Pago","CrearPago", new { id=item.IdContrato})
+                   
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -15,6 +15,7 @@ namespace Inmobiliaria.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        //private readonly RepositorioUsuario repositorioUsuario;
         
         public HomeController(ILogger<HomeController> logger)
         {

@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace Inmobiliaria.Models
 {
-    public class RepositorioContrato
-    {
+	public class RepositorioContrato
+	{
 		private readonly string connectionString;
 		private readonly IConfiguration configuration;
 
@@ -23,18 +23,18 @@ namespace Inmobiliaria.Models
 			int res = -1;
 			using (SqlConnection connection = new SqlConnection(connectionString))
 			{
-				string sql = $"INSERT INTO Contratos (FechaAlta, fechaBaja, IdGarante, IdPago, IdInquilino, IdInmueble ) " +
-					"VALUES (@fechaAlta, @fechaBaja, @idGarante, @idPago, @idInquilino, @idInmueble );" +
+				string sql = $"INSERT INTO Contratos (FechaAlta, fechaBaja, IdGarante, IdInquilino, IdInmueble ) " +
+					"VALUES (@fechaAlta, @fechaBaja, @idGarante,  @idInquilino, @idInmueble );" +
 					"SELECT SCOPE_IDENTITY();";//devuelve el id insertado (LAST_INSERT_ID para mysql)
 				using (var command = new SqlCommand(sql, connection))
 				{
 					command.CommandType = CommandType.Text;
-					command.Parameters.AddWithValue("@direccion", entidad.FechaAlta);
-					command.Parameters.AddWithValue("@tipoInmueble", entidad.FechaBaja);
-					command.Parameters.AddWithValue("@precio", entidad.IdGarante);
-					command.Parameters.AddWithValue("@cantHambientes", entidad.IdPago);
-					command.Parameters.AddWithValue("@uso", entidad.IdInquilino);
-					command.Parameters.AddWithValue("@estado", entidad.IdInmueble);
+					command.Parameters.AddWithValue("@fechaAlta", entidad.FechaAlta);
+					command.Parameters.AddWithValue("@fechaBaja", entidad.FechaBaja);
+					command.Parameters.AddWithValue("@idGarante", entidad.IdGarante);
+
+					command.Parameters.AddWithValue("@idInquilino", entidad.IdInquilino);
+					command.Parameters.AddWithValue("@idInmueble", entidad.IdInmueble);
 					//command.Parameters.AddWithValue("@idPropietario", entidad.IdPropietario);
 					connection.Open();
 					res = Convert.ToInt32(command.ExecuteScalar());
@@ -66,14 +66,14 @@ namespace Inmobiliaria.Models
 			using (SqlConnection connection = new SqlConnection(connectionString))
 			{
 				string sql = "UPDATE Contratos SET " +
-					"FechaAlta=@fechaAlta, FechaBaja=@fechaBaja, IdGarante=@idGarante, IdPago=@idPago, IdInquilino=@idInquilino, IdInmueble=@idInmueble " +
+					"FechaAlta=@fechaAlta, FechaBaja=@fechaBaja, IdGarante=@idGarante, IdInquilino=@idInquilino, IdInmueble=@idInmueble " +
 					"WHERE IdContrato = @idContrato";
 				using (SqlCommand command = new SqlCommand(sql, connection))
 				{
 					command.Parameters.AddWithValue("@fechaAlta", entidad.FechaAlta);
 					command.Parameters.AddWithValue("@fechaBaja", entidad.FechaBaja);
 					command.Parameters.AddWithValue("@idGarante", entidad.IdGarante);
-					command.Parameters.AddWithValue("@idPago", entidad.IdPago);
+
 					command.Parameters.AddWithValue("@idInquilino", entidad.IdInquilino);
 					command.Parameters.AddWithValue("@idInmueble", entidad.IdInmueble);
 					//command.Parameters.AddWithValue("@IdPropietario", entidad.IdPropietario);
@@ -93,14 +93,14 @@ namespace Inmobiliaria.Models
 			using (SqlConnection connection = new SqlConnection(connectionString))
 			{
 				string sql = "UPDATE Contratos SET " +
-					"FechaAlta=@fechaAlta, FechaBaja=@fechaBaja, IdGarante=@idGarante, IdPago=@idPago, IdInquilino=@idInquilino, IdInmueble=@idInmueble " +
+					"FechaAlta=@fechaAlta, FechaBaja=@fechaBaja, IdGarante=@idGarante, IdInquilino=@idInquilino, IdInmueble=@idInmueble " +
 					"WHERE IdContrato = @idContrato";
 				using (SqlCommand command = new SqlCommand(sql, connection))
 				{
 					command.Parameters.AddWithValue("@fechaAlta", entidad.FechaAlta);
 					command.Parameters.AddWithValue("@fechaBaja", entidad.FechaBaja);
 					command.Parameters.AddWithValue("@idGarante", entidad.IdGarante);
-					command.Parameters.AddWithValue("@idPago", entidad.IdPago);
+
 					command.Parameters.AddWithValue("@idInquilino", entidad.IdInquilino);
 					command.Parameters.AddWithValue("@idInmueble", entidad.IdInmueble);
 					//command.Parameters.AddWithValue("@IdPropietario", entidad.IdPropietario);
@@ -119,12 +119,11 @@ namespace Inmobiliaria.Models
 			IList<Contrato> res = new List<Contrato>();
 			using (SqlConnection connection = new SqlConnection(connectionString))
 			{
-				string sql = "SELECT  IdContrato, FechaAlta, FechaBaja, c.IdGarante, c.IdPago, c.IdInquilino, c.IdInmueble ," +
-					" g.Nombre, g.Apellido , p.Fechapago , i.Nombre,i.Apellido, ii.Precio " +
-					" FROM Contratos c INNER JOIN Garantes g ON c.IdGarante = g.IdGarante " +
-					"INNER JOIN Pagos p ON c.IdPago = p.IdPago " +
-					"INNER JOIN Inquilinos i ON c.IdInquilino = i.IdInquilino " +
-					"INNER JOIN Inmuebles ii ON c.IdInmueble = ii.IdInmueble" ;
+				string sql = "SELECT  IdContrato, FechaAlta, FechaBaja, c.IdGarante, c.IdInquilino, c.IdInmueble ," +
+					" g.Nombre , g.Apellido, i.Nombre, i.Apellido,ii.Precio" +
+					" FROM Contratos c INNER JOIN Garantes g ON c.IdGarante = g.IdGarante" +
+					" INNER JOIN Inquilinos i ON c.IdInquilino = i.IdInquilino" +
+					" INNER JOIN Inmuebles ii ON c.IdInmueble = ii.IdInmueble ";
 				using (SqlCommand command = new SqlCommand(sql, connection))
 				{
 					command.CommandType = CommandType.Text;
@@ -138,45 +137,46 @@ namespace Inmobiliaria.Models
 							FechaAlta = reader.GetDateTime(1),
 							FechaBaja = reader.GetDateTime(2),
 							IdGarante = reader.GetInt32(3),
-							IdPago = reader.GetInt32(4),
-							IdInquilino = reader.GetInt32(5),
-							IdInmueble = reader.GetInt32(6),
 							garante = new Garante
 							{
-								Nombre = reader.GetString(7),
-								Apellido = reader.GetString(8),
+								Nombre = reader.GetString(6),
+								Apellido = reader.GetString(7),
 							},
-							pago=new Pago
-							{ 
-								FechaPago= reader.GetDateTime(9),
-							},
-							inquilino=new Inquilino
-							{ 
-								Nombre=reader.GetString(10),
-								Apellido=reader.GetString(11),
-							},
-							inmueble=new Inmueble 
+							//IdPago = reader.GetInt32(4),
+							IdInquilino = reader.GetInt32(4),
+							inquilino = new Inquilino
 							{
-								Precio=reader.GetDecimal(12),
+								Nombre = reader.GetString(8),
+								Apellido = reader.GetString(9),
+							},
+							IdInmueble = reader.GetInt32(5),
+							inmueble = new Inmueble
+							{
+								Precio = reader.GetDecimal(10)
 							}
 
-						};
+						};// termina contrato entidad
 						res.Add(entidad);
-					}
+					}//while
 					connection.Close();
-				}
-			}
+				}//using conexion
+			}//using consulta
 			return res;
-		}
+		}//termina metodo
 
-		public Inmueble ObtenerPorId(int id)
+
+		public Contrato ObtenerPorId(int id)//contrato
 		{
-			Inmueble entidad = null;
+			Contrato entidad = null;
 			using (SqlConnection connection = new SqlConnection(connectionString))
 			{
-				string sql = $"SELECT IdInmueble, Direccion, TipoInmueble, Precio, CantHambientes, Uso, Estado, i.IdPropietario, p.Nombre, p.Apellido" +
-					$" FROM Inmuebles i INNER JOIN Propietarios p ON i.IdPropietario = p.IdPropietario" +
-					$" WHERE IdInmueble=@id";
+				string sql = "SELECT  IdContrato, FechaAlta, FechaBaja, c.IdGarante, c.IdInquilino, c.IdInmueble ," +
+					" g.Nombre, g.Apellido , i.Nombre,i.Apellido, ii.Precio " +
+					" FROM Contratos c INNER JOIN Garantes g ON c.IdGarante = g.IdGarante " +
+
+					"INNER JOIN Inquilinos i ON c.IdInquilino = i.IdInquilino " +
+					"INNER JOIN Inmuebles ii ON c.IdInmueble = ii.IdInmueble " +
+					$" WHERE c.IdContrato=@id";
 				using (SqlCommand command = new SqlCommand(sql, connection))
 				{
 					command.Parameters.Add("@id", SqlDbType.Int).Value = id;
@@ -185,22 +185,34 @@ namespace Inmobiliaria.Models
 					var reader = command.ExecuteReader();
 					if (reader.Read())
 					{
-						entidad = new Inmueble
+						entidad = new Contrato
 						{
-							IdInmueble = reader.GetInt32(0),
-							Direccion = reader.GetString(1),
-							TipoInmueble = reader.GetString(2),
-							Precio = reader.GetDecimal(3),
-							CantHambientes = reader.GetInt32(4),
-							Uso = reader.GetString(5),
-							Estado = reader.GetString(6),
-							IdPropietario = reader.GetInt32(7),
-							Propietario = new Propietario
+							IdContrato = reader.GetInt32(0),
+							FechaAlta = reader.GetDateTime(1),
+							FechaBaja = reader.GetDateTime(2),
+							IdGarante = reader.GetInt32(3),
+							garante = new Garante
+							{
+								//IdPropietario = reader.GetInt32(8),
+								Nombre = reader.GetString(6),
+								Apellido = reader.GetString(7),
+							},
+							IdInquilino = reader.GetInt32(4),
+							inquilino = new Inquilino
 							{
 								//IdPropietario = reader.GetInt32(8),
 								Nombre = reader.GetString(8),
 								Apellido = reader.GetString(9),
+							},
+
+							IdInmueble = reader.GetInt32(5),
+							inmueble = new Inmueble
+							{
+								//IdPropietario = reader.GetInt32(8),
+								Precio = reader.GetDecimal(10)
+
 							}
+
 						};
 					}
 					connection.Close();
@@ -208,47 +220,62 @@ namespace Inmobiliaria.Models
 			}
 			return entidad;
 		}
-
-		public IList<Inmueble> BuscarPorPropietario(int idPropietario)
+		public IList<Contrato> ObtenerPorDni(string dni)//busco el contrato de un inquilino pasando el id
 		{
-			List<Inmueble> res = new List<Inmueble>();
-			Inmueble entidad = null;
+			IList<Contrato> res = new List<Contrato>();
+
 			using (SqlConnection connection = new SqlConnection(connectionString))
 			{
-				string sql = $"SELECT IdInmueble, Direccion, TipoInmueble, Precio, CantHambientes, Uso, Estado, i.IdPropietario, p.Nombre, p.Apellido" +
-					$" FROM Inmuebles i INNER JOIN Propietarios p ON i.IdPropietario = p.IdPropietario" +
-					$" WHERE i.IdPropietario=@idPropietario";
+				string sql = "SELECT  IdContrato, FechaAlta, FechaBaja, c.IdGarante, c.IdInquilino, c.IdInmueble ," +
+					" g.Nombre, g.Apellido , i.Nombre,i.Apellido, ii.Precio " +
+					" FROM Contratos c INNER JOIN Garantes g ON c.IdGarante = g.IdGarante " +
+
+					"INNER JOIN Inquilinos i ON c.IdInquilino = i.IdInquilino " +
+					"INNER JOIN Inmuebles ii ON c.IdInmueble = ii.IdInmueble " +
+					$" WHERE i.Dni=@dni";// debo mostrar tambien los contratos vigentes
 				using (SqlCommand command = new SqlCommand(sql, connection))
 				{
-					command.Parameters.Add("@idPropietario", SqlDbType.Int).Value = idPropietario;
+					command.Parameters.AddWithValue("@dni", dni);
 					command.CommandType = CommandType.Text;
 					connection.Open();
 					var reader = command.ExecuteReader();
 					while (reader.Read())
 					{
-						entidad = new Inmueble
+						Contrato entidad = new Contrato
 						{
-							IdInmueble = reader.GetInt32(0),
-							Direccion = reader.GetString(1),
-							TipoInmueble = reader.GetString(2),
-							Precio = reader.GetDecimal(3),
-							CantHambientes = reader.GetInt32(4),
-							Uso = reader.GetString(5),
-							Estado = reader.GetString(6),
-							IdPropietario = reader.GetInt32(7),
-							Propietario = new Propietario
+							IdContrato = reader.GetInt32(0),
+							FechaAlta = reader.GetDateTime(1),
+							FechaBaja = reader.GetDateTime(2),
+							IdGarante = reader.GetInt32(3),
+							garante = new Garante
 							{
-								//IdPropietario = reader.GetInt32(6),
+								//IdPropietario = reader.GetInt32(8),
+								Nombre = reader.GetString(6),
+								Apellido = reader.GetString(7),
+							},
+							IdInquilino = reader.GetInt32(4),
+							inquilino = new Inquilino
+							{
+								//IdPropietario = reader.GetInt32(8),
 								Nombre = reader.GetString(8),
 								Apellido = reader.GetString(9),
+							},
+
+							IdInmueble = reader.GetInt32(5),
+							inmueble = new Inmueble
+							{
+								//IdPropietario = reader.GetInt32(8),
+								Precio = reader.GetDecimal(10)
 							}
-						};
+
+						};//termina entidad
 						res.Add(entidad);
-					}
+					}//termina whilw
 					connection.Close();
-				}
+				}//termina using	
 			}
+
 			return res;
 		}
-	}
+	}	
 }

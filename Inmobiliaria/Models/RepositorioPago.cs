@@ -113,7 +113,11 @@ namespace Inmobiliaria.Models
 			IList<Pago> res = new List<Pago>();
 			using (SqlConnection connection = new SqlConnection(connectionString))
 			{
-				string sql = $"SELECT IdPago, FechaPago, NumeroPago, Importe FROM Pagos ";
+				string sql = "SELECT  IdPago, FechaPago, NumeroPago, Importe, p.IdContrato, c.IdInquilino, i.Nombre , i.Apellido" +
+					" FROM Pagos p INNER JOIN Contratos c ON p.IdContrato = c.IdContrato" +
+					" INNER JOIN Inquilinos i ON c.IdInquilino = i.IdInquilino";
+					
+					
 				using (SqlCommand command = new SqlCommand(sql, connection))
 				{
 					command.CommandType = CommandType.Text;
@@ -127,6 +131,17 @@ namespace Inmobiliaria.Models
 							FechaPago = reader.GetDateTime(1),
 							NumeroPago = reader.GetInt32(2),
 							Importe = reader.GetDecimal(3),
+							IdContrato= reader.GetInt32(4),
+							contrato= new Contrato
+							{ 
+								IdInquilino= reader.GetInt32(5),
+								inquilino = new Inquilino
+								{
+									Nombre = reader.GetString(6),
+									Apellido = reader.GetString(7),
+								},
+							}
+							
 							
 						};
 						res.Add(p);
@@ -167,8 +182,29 @@ namespace Inmobiliaria.Models
 			return p;
 		}
 
-		
+		public int ObtenerCantidadPagos(int id)// debere pasar el id del contrato
+		{
+			int  p = 0;
+			using (SqlConnection connection = new SqlConnection(connectionString))
+			{
+				string sql = $"SELECT COUNT(NumeroPago)  FROM Pagos" +
+					$" WHERE IdContrato=@id";
+				using (SqlCommand command = new SqlCommand(sql, connection))
+				{
+					command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+					command.CommandType = CommandType.Text;
+					connection.Open();
+					var reader = command.ExecuteReader();
+					if (reader.Read())
+					{
+						p = reader.GetInt32(0);
+					}
+					connection.Close();
+				}
+			}
+			return p;
+		}
 
-		
+
 	}
 }

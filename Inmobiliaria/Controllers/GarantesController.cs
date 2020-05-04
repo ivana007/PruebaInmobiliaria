@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Inmobiliaria.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace Inmobiliaria.Controllers
 {
+    [Authorize]
     public class GarantesController : Controller
     {
         private readonly IConfiguration configuration;
@@ -81,7 +83,7 @@ namespace Inmobiliaria.Controllers
                 return View();
             }
         }
-
+        [Authorize(Policy = "Administrador")]
         // GET: Garantes/Delete/5
         public ActionResult Delete(int id)
         {

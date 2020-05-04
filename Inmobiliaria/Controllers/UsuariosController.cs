@@ -186,7 +186,7 @@ namespace Inmobiliaria.Controllers
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity));
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index","Home");
                 }
                 return View();
             }

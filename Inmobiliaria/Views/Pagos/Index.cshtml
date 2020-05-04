@@ -7,8 +7,25 @@
 <h1>Indice</h1>
 
 <p>
-    <a asp-action="Create">Crear Nuevo Pago</a>
+    
+    <a asp-action="BuscarContrato">Crear Nuevo</a>
+
 </p>
+<div id="divBuscarI">
+</div>
+@section scripts
+{
+<script>
+    $(document).ready(function () {
+        $("#btnCrearNuevoPago").click(function () {
+            $("#divBuscarI").load("modal_BuscarInquilino");
+        });
+    });
+</script>
+
+
+ }
+
 <table class="table">
     <thead>
         <tr>
@@ -24,30 +41,72 @@
             <th>
                 @Html.DisplayNameFor(model => model.Importe)
             </th>
+            <th>
+                @* @Html.DisplayNameFor(model => model.IdContrato)*@
+                Contrato
+            </th>
+            <th>
+                @* @Html.DisplayNameFor(model => model.IdContrato)*@
+                Nombre Inquilino
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdPago)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaPago)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumeroPago)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Importe)
-            </td>
-            <td>
-                @Html.ActionLink("Editar", "Edit", new { id=item.IdPago  }) |
-                @Html.ActionLink("Detalles", "Details", new {  id=item.IdPago  }) |
-                @Html.ActionLink("Borrar", "Delete", new {  id=item.IdPago  })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IdPago)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaPago)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumeroPago)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Importe)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IdContrato)
+                </td>
+                <td>
+                    @(item.contrato.inquilino.Nombre+" "+ item.contrato.inquilino.Apellido)
+                </td>
+                <td>
+                    @Html.ActionLink("Editar", "Edit", new { id = item.IdPago }) |
+                    @Html.ActionLink("Detalles", "Details", new { id = item.IdPago }) |
+                    @Html.ActionLink("Borrar", "Delete", new { id = item.IdPago })
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<script>
+    function BuscarInquilinoModal() {
+        var modal = document.getElementById(modal_BuscarInquilino);
+        var abrirModal = () => {
+            $('#modal_BuscarInquilino').modal("show");
+        }
+        if (!modal) {
+            $.ajax({
+                url='@Url.Action("BuscarInquilinoModal","Pagos")',
+            }).done(res => {
+                console.log("Modal: ", res);
+                var div = document.createElement("div");
+                div.innerHTML = res;
+                document.body.appendChild(div);
+                abrirModal();
+            }).fail(res => {
+                console.log("Error : ", res);
+            });
+
+        } else {
+            abrirModal();
+        }
+
+    }
+
+</script>

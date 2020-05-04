@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Inmobiliaria.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace Inmobiliaria.Controllers
 {
+    [Authorize]
     public class ContratosController : Controller
     {
         private readonly IConfiguration configuration;
@@ -40,7 +42,9 @@ namespace Inmobiliaria.Controllers
         // GET: Contratos/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var c = repositorioContrato.ObtenerPorId(id);
+            ViewBag.Garante = c.garante.Nombre + "" + c.garante.Apellido; 
+            return View(c);
         }
 
         // GET: Contratos/Create
@@ -48,7 +52,7 @@ namespace Inmobiliaria.Controllers
         {
             ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos();
             ViewBag.Inmuebles = repositorioInmueble.ObtenerTodos();
-            ViewBag.Pagos = repositorioPago.ObtenerTodos();//podria mostrar los pagos de los ultimos 2 dias o del dia actual
+           // ViewBag.Pagos = repositorioPago.ObtenerTodos();//podria mostrar los pagos de los ultimos 2 dias o del dia actual
             ViewBag.Garantes = repositorioGarante.ObtenerTodos();
             return View();
         }
@@ -64,8 +68,10 @@ namespace Inmobiliaria.Controllers
                 int res = repositorioContrato.Alta(c);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch(Exception ex)
             {
+                ViewBag.Error = ex.Message;
+                ViewBag.StackTrate = ex.StackTrace;
                 return View();
             }
         }
@@ -73,18 +79,23 @@ namespace Inmobiliaria.Controllers
         // GET: Contratos/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos();
+            ViewBag.Inmuebles = repositorioInmueble.ObtenerTodos();
+            ViewBag.Garantes = repositorioGarante.ObtenerTodos();
+            var c = repositorioContrato.ObtenerPorId(id);
+            return View(c);
         }
 
         // POST: Contratos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Contrato c)
         {
             try
             {
                 // TODO: Add update logic here
-
+                c.IdContrato = id;
+                int res = repositorioContrato.Modificacion(c);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -94,20 +105,23 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Contratos/Delete/5
+        [Authorize(Policy = "Administrador")]
         public ActionResult Delete(int id)
         {
-            return View();
+            var c = repositorioContrato.ObtenerPorId(id);
+            return View(c);
         }
 
         // POST: Contratos/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Contrato c)
         {
             try
             {
                 // TODO: Add delete logic here
-
+                c.IdContrato = id;
+                int res = repositorioContrato.BajaLogica(c);
                 return RedirectToAction(nameof(Index));
             }
             catch

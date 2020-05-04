@@ -10,6 +10,7 @@ namespace Inmobiliaria.Models
     {
         [Key]
         public int IdPago { get; set; }
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
         public DateTime FechaPago { get; set; }
         public int NumeroPago { get; set; }
         public decimal Importe { get; set; }
